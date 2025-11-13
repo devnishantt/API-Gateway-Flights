@@ -1,7 +1,7 @@
 import logger from "../config/loggerConfig.js";
 import { sendError } from "../utils/response.js";
 
-export function errorHandlerMiddleware(err, req, res, next) {
+export default function errorHandlerMiddleware(err, req, res, next) {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
 

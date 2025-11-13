@@ -8,7 +8,7 @@ export function authenticate(req, res, next) {
     req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    sendError(res, "Access token is required", 401);
+    return sendError(res, "Access token is required", 401);
   }
 
   try {
@@ -16,10 +16,8 @@ export function authenticate(req, res, next) {
     req.user = decoded;
     next();
   } catch (error) {
-    sendError(res, "Invalid or expired token", 401);
+    return sendError(res, "Invalid or expired token", 401);
   }
-  req.user = decoded;
-  next();
 }
 
 export function optionalAuthMiddleware(req, res, next) {
@@ -30,6 +28,7 @@ export function optionalAuthMiddleware(req, res, next) {
   if (token) {
     try {
       const decoded = jwt.verify(token, jwtConfig.JWT_SECRET);
+      req.user = decoded;
     } catch (error) {
       // Continue without user context if token is invalid
     }

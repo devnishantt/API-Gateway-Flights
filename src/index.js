@@ -1,25 +1,27 @@
 import express from "express";
-import { PORT } from "./config/serverConfig.js";
-import apiRouter from "./routes/apiRoutes.js";
+import { corsConfig, PORT } from "./config/serverConfig.js";
 import logger from "./config/loggerConfig.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import errorHandler from "./middlewares/errorHandler.js";
+import gatewayRouter from "./routes/gatewayRoutes.js";
 
 const app = express();
 
-app.use(express.json());
+app.use("/", gatewayRouter);
+
+// app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(cors(corsConfig));
 
 app.get("/health", (req, res) => {
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "Server is running",
-      timestamp: new Date().toISOString(),
-    });
+  res.status(200).json({
+    success: true,
+    message: "Server is running",
+    timestamp: new Date().toISOString(),
+  });
 });
-
-app.use("/api", apiRouter);
 
 app.use(errorHandler);
 
